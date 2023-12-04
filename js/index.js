@@ -1,4 +1,4 @@
-class Products {
+/* class Products {
     constructor() {
     this.elements = [];
     this.id = 0;
@@ -48,5 +48,5 @@ datos.addProduct("Poner", "Nuevos", 100, "Datos", "Aca", 546);
 datos.addProduct("producto2", "descripción2", 200, "imagen2", "131", 789);
 console.log(datos.getProducts());
 console.log(datos.getProductById(1));
-console.log(datos.getProductById(5));
+console.log(datos.getProductById(5)); */
 
