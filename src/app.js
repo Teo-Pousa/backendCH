@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = 8080;
 
-const productManager = new Products('productos.json');
+const productManager = new Products('products.json');
 
 const productsRouter = express.Router();
 const cartsRouter = express.Router();
@@ -16,6 +16,9 @@ const cartsRouter = express.Router();
 app.use(express.json());
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
+
+const CartManager = require('./cartManager');
+const cartManager = new CartManager('cart.json');
 
 // rutas productos
 productsRouter.get('/', async (req, res) => {
@@ -114,12 +117,25 @@ cartsRouter.post('/', async (req, res) => {
         };
 
         // persistencia carrito
-        await fs.writeFile('carrito.json', JSON.stringify(newCart, null, 2));
+        await fs.writeFile('cart.json', JSON.stringify(newCart, null, 2));
 
         res.json({ message: 'Carrito creado correctamente.', cart: newCart });
     } catch (error) {
         console.error('Error al crear un nuevo carrito:', error);
         res.status(500).json({ error: 'Error al crear un nuevo carrito.' });
+    }
+});
+cartsRouter.post('/:cid/product/:pid', async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const productId = req.params.pid;
+        const quantity = req.body.quantity || 1;
+
+        await cartManager.addProductToCart(productId, quantity);
+        res.json({ message: 'Producto agregado al carrito correctamente.' });
+    } catch (error) {
+        console.error('Error al agregar producto al carrito:', error);
+        res.status(500).json({ error: 'Error al agregar producto al carrito.' });
     }
 });
 

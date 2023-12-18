@@ -164,6 +164,44 @@ class ProductManager {
         }
     }
 
+async addProduct(product) {
+    try {
+        const products = await this.getProducts();
+
+        const encontrado = products.some(e => e.code === product.code);
+        if (!encontrado) {
+            const newId = await this.calculateNextId();
+            product.id = newId; // Agregar el ID al producto
+            products.push(product);
+            await this.saveProducts(products);
+            console.log("Producto agregado correctamente:", product);
+        } else {
+            console.log("El código ingresado ya existe.");
+        }
+    } catch (error) {
+        console.error("Error al agregar el producto:", error);
+    }
+}
+
+async addProduct(product) {
+    try {
+        const products = await this.getProducts();
+
+        const encontrado = products.some(e => e.code === product.code);
+        if (!encontrado) {
+            const newId = await this.calculateNextId();
+            product.id = newId;
+            products.push(product);
+            await this.saveProducts(products);
+            console.log("Producto agregado correctamente:", product);
+        } else {
+            console.log("El código ingresado ya existe.");
+        }
+    } catch (error) {
+        console.error("Error al agregar el producto:", error);
+    }
+}
+
     async getProductById(id) {
         try {
             const products = await this.getProducts();
