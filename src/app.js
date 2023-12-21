@@ -1,11 +1,16 @@
 
 
 const express = require('express');
-const fs = require('fs/promises');
+const expressHandlebars = require('express-handlebars');
+const http = require('http');
+const socketIo = require('socket.io');
 const Products = require('./productManager');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
 const PORT = 8080;
 
 const productManager = new Products('products.json');
@@ -19,6 +24,15 @@ app.use('/api/carts', cartsRouter);
 
 const CartManager = require('./cartManager');
 const cartManager = new CartManager('cart.json');
+
+// Configuración de Handlebars
+app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
+app.set('view engine', 'handlebars');
+
+app.use(express.json());
+app.use(express.static('public'));
+
+app.use('/api/products', productsRouter);
 
 // rutas productos
 productsRouter.get('/', async (req, res) => {
@@ -183,6 +197,39 @@ cartsRouter.post('/:cid/product/:pid', async (req, res) => {
     }
 });
 
+// Socket.io configuration
+io.on('connection', (socket) => {
+    console.log('Nuevo cliente conectado');
+    socket.on('disconnect', () => {
+        console.log('Cliente desconectado');
+    });
+});
+// Cuando agregues o elimines un producto
+io.emit('productUpdate', 'Actualización de productos');
+// Vista Home con todos los productos
+app.get('/', async (req, res) => {
+    const products = await productManager.getProducts();
+    res.render('home', { products });
+});
+// Vista Home
+app.get('/home', async (req, res) => {
+    try {
+        const products = await productManager.getProducts();
+        res.render('home', { products });
+    } catch (error) {
+        console.error('Error al obtener productos:', error);
+        res.status(500).send('Error interno del servidor.');
+    }
+});
+// Vista RealTimeProducts con WebSockets
+app.get('/realtimeproducts', async (req, res) => {
+    const products = await productManager.getProducts();
+    res.render('realTimeProducts', { products });
+});
+
 app.listen(PORT, () => {
+    console.log(`Servidor Express iniciado en http://localhost:${PORT}`);
+});
+server.listen(PORT, () => {
     console.log(`Servidor Express iniciado en http://localhost:${PORT}`);
 });
