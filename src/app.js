@@ -5,7 +5,7 @@ const expressHandlebars = require('express-handlebars');
 const http = require('http');
 const socketIo = require('socket.io');
 const Products = require('./productManager');
-const productsRouter = require('./routes');
+const productsRouter = require('../router/index');
 
 const app = express();
 const server = http.createServer(app);
@@ -49,10 +49,31 @@ app.get('/home', async (req, res) => {
         res.status(500).send('Error interno del servidor.');
     }
 });
+
+app.get('/', (req, res) => {
+    res.render('home', { layout: 'layouts/main' });
+});
+
+let productsData = [];
+try {
+    const rawData = fs.readFileSync('products.json');
+    productsData = JSON.parse(rawData);
+} catch (error) {
+    console.error('Error al leer el archivo products.json:', error);
+}
+
+app.get('/realtimeproducts', (req, res) => {
+    res.render('realTimeProducts', { products: productsData });
+});
+
+
 // Vista RealTimeProducts con WebSockets
-app.get('/realtimeproducts', async (req, res) => {
+app.get('/realTimeProducts', async (req, res) => {
     const products = await productManager.getProducts();
     res.render('realTimeProducts', { products });
+});
+app.get('/websockets', (req, res) => {
+    res.render('websockets', { layout: 'layouts/main' });
 });
 
 server.listen(PORT, () => {

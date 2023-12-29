@@ -12,5 +12,6 @@ router.delete('/:pid', productsController.deleteProduct);
 
 router.post('/:cid/product/:pid', cartsController.addProductToCart);
 router.get('/:cid', cartsController.getCart);
+router.post('/', cartsController.addProductToCart);
 
 module.exports = router;

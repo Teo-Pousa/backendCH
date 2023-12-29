@@ -1,8 +1,7 @@
 const fs = require('fs').promises;
-const cartManager = require('../cartManager');
+const cartManager = require('../src/cartManager');
 const { v4: uuidv4 } = require('uuid');
 exports.addProductToCart = async (req, res) => {
-    cartsRouter.post('/', async (req, res) => {
         try {
             const newCart = {
                 id: uuidv4(),
@@ -17,8 +16,7 @@ exports.addProductToCart = async (req, res) => {
             console.error('Error al crear un nuevo carrito:', error);
             res.status(500).json({ error: 'Error al crear un nuevo carrito.' });
         }
-    });
-    cartsRouter.post('/:cid/product/:pid', async (req, res) => {
+    };
         try {
             const cartId = req.params.cid;
             const productId = req.params.pid;
@@ -29,11 +27,9 @@ exports.addProductToCart = async (req, res) => {
         } catch (error) {
             console.error('Error al agregar producto al carrito:', error);
             res.status(500).json({ error: 'Error al agregar producto al carrito.' });
-        }
-    });
-};
+        };
 
-cartsRouter.post('/:cid/product/:pid', async (req, res) => {
+/* cartsRouter.post('/:cid/product/:pid', async (req, res) => {
     try {
         const cartId = req.params.cid;
         const productId = req.params.pid;
@@ -63,18 +59,15 @@ cartsRouter.post('/:cid/product/:pid', async (req, res) => {
         res.status(500).json({ error: 'Error al agregar un producto al carrito.' });
     }
 });
-
+ */
 exports.getCart = async (req, res) => {
-    cartsRouter.get('/:cid', async (req, res) => {
         try {
             const cartId = req.params.cid;
             const cartData = await fs.readFile('cart.json', 'utf-8');
             const cart = JSON.parse(cartData);
-    
             res.json({ cart });
         } catch (error) {
             console.error('Error al obtener el carrito por ID:', error);
             res.status(500).json({ error: 'Error al obtener el carrito por ID.' });
         }
-    });
-};
+    };

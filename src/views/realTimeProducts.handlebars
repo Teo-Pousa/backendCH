@@ -1,0 +1,40 @@
+<h2>Productos en Tiempo Real</h2>
+<ul id="products-list">
+    {{#each products}}
+        <li>{{this.title}}</li>
+    {{else}}
+        <li>No hay productos disponibles.</li>
+    {{/each}}
+</ul>
+
+<!-- Formulario para agregar productos -->
+<form id="product-form">
+    <input type="text" id="product-title" placeholder="Título del producto">
+    <input type="submit" value="Agregar Producto">
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    // Manejar el envío del formulario
+    document.getElementById('product-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const productTitle = document.getElementById('product-title').value;
+        // Puedes agregar más campos del formulario si es necesario
+
+        socket.emit('addProduct', { title: productTitle });
+    });
+
+    // Escuchar la actualización de productos desde el servidor
+    socket.on('productsUpdate', function(products) {
+        const productsList = document.getElementById('products-list');
+        productsList.innerHTML = '';
+        products.forEach(product => {
+            const listItem = document.createElement('li');
+            listItem.textContent = product.title;
+            productsList.appendChild(listItem);
+        });
+    });
+</script>

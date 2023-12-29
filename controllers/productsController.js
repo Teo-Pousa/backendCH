@@ -1,9 +1,8 @@
 const { v4: uuidv4 } = require('uuid');
-const productManager = require('../productManager');
+const productManager = require('../src/productManager');
 
 exports.getProducts = async (req, res) => {
     // rutas productos
-productsRouter.get('/', async (req, res) => {
     try {
         const limit = req.query.limit;
         const products = await productManager.getProducts();
@@ -17,11 +16,9 @@ productsRouter.get('/', async (req, res) => {
         console.error('Error al obtener productos:', error);
         res.status(500).json({ error: 'Error al obtener productos.' });
     }
-});
 };
 
 exports.getProductById = async (req, res) => {
-    productsRouter.get('/:pid', async (req, res) => {
         try {
             const productId = parseInt(req.params.pid, 10);
             const product = await productManager.getProductById(productId);
@@ -34,11 +31,10 @@ exports.getProductById = async (req, res) => {
             console.error('Error al obtener el producto por ID:', error);
             res.status(500).json({ error: 'Error al obtener el producto por ID.' });
         }
-    });
-};
+    };
+
 
 exports.addProduct = async (req, res) => {
-    productsRouter.post('/', async (req, res) => {
         try {
             const newProduct = {
                 id: uuidv4(),
@@ -58,11 +54,9 @@ exports.addProduct = async (req, res) => {
             console.error('Error al agregar un nuevo producto:', error);
             res.status(500).json({ error: 'Error al agregar un nuevo producto.' });
         }
-    });
-};
+    };
 
 exports.updateProduct = async (req, res) => {
-    productsRouter.put('/:pid', async (req, res) => {
         try {
             const productId = parseInt(req.params.pid, 10);
             const updatedProduct = {
@@ -83,11 +77,9 @@ exports.updateProduct = async (req, res) => {
             console.error('Error al actualizar el producto:', error);
             res.status(500).json({ error: 'Error al actualizar el producto.' });
         }
-    });
-};
+    };
 
 exports.deleteProduct = async (req, res) => {
-    productsRouter.delete('/:pid', async (req, res) => {
         try {
             const productId = parseInt(req.params.pid, 10);
             await productManager.deleteProduct(productId);
@@ -96,5 +88,4 @@ exports.deleteProduct = async (req, res) => {
             console.error('Error al eliminar el producto:', error);
             res.status(500).json({ error: 'Error al eliminar el producto.' });
         }
-    });
-};
+    };
