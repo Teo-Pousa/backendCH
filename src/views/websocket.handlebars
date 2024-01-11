@@ -1,0 +1,37 @@
+<h2>WebSocket Chat</h2>
+
+<!-- Mostrar mensajes recibidos a través de WebSocket -->
+<ul id="chat-messages">
+    {{#each messages}}
+        <li>{{this}}</li>
+    {{else}}
+        <li>No hay mensajes disponibles.</li>
+    {{/each}}
+</ul>
+
+<!-- Formulario para enviar mensajes a través de WebSocket -->
+<form id="chat-form">
+    <input type="text" id="message-input" placeholder="Escribe tu mensaje">
+    <input type="submit" value="Enviar">
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    // Manejar el envío del formulario
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const messageInput = document.getElementById('message-input').value;
+        socket.emit('sendMessage', messageInput);
+    });
+
+    // Escuchar mensajes recibidos a través de WebSocket
+    socket.on('receiveMessage', function(message) {
+        const chatMessages = document.getElementById('chat-messages');
+        const listItem = document.createElement('li');
+        listItem.textContent = message;
+        chatMessages.appendChild(listItem);
+    });
+</script>
